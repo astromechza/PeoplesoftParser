@@ -7,7 +7,7 @@ class PeoplesoftParser
     REDIRECT_LIMIT = 10
 
     NOT_FOUND_TEXT = 'No student record found for this Campus ID'
-    FAIL_TEXT = ''
+    FAIL_TEXT = "It's now at <a href=\"https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/?cmd=logout\""
 
     def initialize
         @cookies = ''
@@ -26,7 +26,9 @@ class PeoplesoftParser
 
             response = http.request_post(URI('https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL'), construct_post_data(student_number, icsid), {'Cookie' => @cookies})
 
-            if response.body.include? NOT_FOUND_TEXT
+            if response.body.include? FAIL_TEXT
+                raise 'Failed. Please retry.'
+            elsif response.body.include? NOT_FOUND_TEXT
                 return nil
             else
                 open('dump3.txt', "w") { |io| io.write(response.body) }
@@ -70,6 +72,7 @@ class PeoplesoftParser
                 points: span_array[5].content
             }
         end
+
 
         def construct_post_data(student_number, sid)
             """
