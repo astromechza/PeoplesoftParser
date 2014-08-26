@@ -13,5 +13,8 @@ Gem::Specification.new do |s|
     s.required_ruby_version     = '>= 2.1.0'
     s.homepage = 'http://github.com/AstromechZA/PeoplesoftParser'
 
+    s.add_dependency 'nokogiri'
+
     s.add_development_dependency 'rspec'
+
 end
