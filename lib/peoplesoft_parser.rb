@@ -17,23 +17,36 @@ class PeoplesoftParser
     def retrieve(student_number)
         Net::HTTP.start('srvslspsw001.uct.ac.za', use_ssl: true) do |http|
 
+            # first load the form path, so we get the ICSID value
             response = follow_get(http, PAGE_PATH)
+            icsid = Nokogiri::HTML(response.body).css('#ICSID').attr('value')
 
-            doc = Nokogiri::HTML(response.body)
-
-            icsid = doc.css('#ICSID').attr('value')
-
+            # now submit the form to get the next page, include the cookies and header stuff
             response = http.request_post(PAGE_PATH, construct_post_data(student_number, icsid), {'Cookie' => @cookies})
 
-            if response.body.include? FAIL_TEXT
-                raise 'Failed. Please retry.'
+            if response.body.include? 'DERIVED_SCC_SUM_PERSON_NAME'
+                # yay!
+
+                output = {}
+
+                # load document
+                doc = Nokogiri::HTML(response.body)
+
+                # fetch name
+                output['name'] = doc.xpath("//span[@id='DERIVED_SCC_SUM_PERSON_NAME$5$']")[0].content
+
+                # fetch year
+                output['year'] = doc.xpath("//span[@id='DERIVED_REGFRM1_SSR_STDNTKEY_DESCR$5$']")[0].content[0,4]
+
+                rows = doc.xpath("//table[@id='TERM_CLASSES$scroll$0']/tr/td/table/tr[position()>1]")
+                output['results'] = rows.map { |r| construct_course_model(r.css('span'))  }
+
+                return output
             elsif response.body.include? NOT_FOUND_TEXT
                 return nil
             else
-                doc = Nokogiri::HTML(response.body)
-                rows = doc.xpath("//table[@id='TERM_CLASSES$scroll$0']/tr/td/table/tr[position()>1]")
-
-                return rows.map { |r| construct_course_model(r.css('span'))  }
+                open('dump_error.txt', 'w') { |io| io.write(response.body) }
+                raise 'Failed. Please retry.'
             end
         end
     end
