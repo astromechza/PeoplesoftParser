@@ -8,6 +8,10 @@ class PeoplesoftParser
     NOT_FOUND_TEXT = 'No student record found for this Campus ID'
     FAIL_TEXT = "It's now at <a href=\"https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/?cmd=logout\""
 
+    PAGE_PATH = '/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL'
+
+    FORM_PATH_ARGS = '?FolderPath=PORTAL_ROOT_OBJECT.UCT_SS_ADV_PUBLIC_GBL_1&IsFolder=false&IgnoreParamTempl=FolderPath%252cIsFolder&PortalActualURL=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2fEMPLOYEE%2fHRMS%2fc%2fUCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL&PortalContentURL=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2fEMPLOYEE%2fHRMS%2fc%2fUCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL&PortalContentProvider=HRMS&PortalCRefLabel=Public%20Access&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsp%2fpublic%2f&PortalURI=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2f&PortalHostNode=HRMS&NoCrumbs=yes&PortalKeyStruct=yes'
+
     def initialize
         @cookies = ''
     end
@@ -15,23 +19,19 @@ class PeoplesoftParser
     def retrieve(student_number)
         Net::HTTP.start('srvslspsw001.uct.ac.za', use_ssl: true) do |http|
 
-            #response = follow_get(http, URI('https://srvslspsw001.uct.ac.za/psp/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL?FolderPath=PORTAL_ROOT_OBJECT.UCT_SS_ADV_PUBLIC_GBL_1&IsFolder=false&IgnoreParamTempl=FolderPath%252cIsFolder'))
-
-            response = follow_get(http, URI('https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL?FolderPath=PORTAL_ROOT_OBJECT.UCT_SS_ADV_PUBLIC_GBL_1&IsFolder=false&IgnoreParamTempl=FolderPath%252cIsFolder&PortalActualURL=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2fEMPLOYEE%2fHRMS%2fc%2fUCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL&PortalContentURL=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2fEMPLOYEE%2fHRMS%2fc%2fUCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL&PortalContentProvider=HRMS&PortalCRefLabel=Public%20Access&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsp%2fpublic%2f&PortalURI=https%3a%2f%2fsrvslspsw001.uct.ac.za%2fpsc%2fpublic%2f&PortalHostNode=HRMS&NoCrumbs=yes&PortalKeyStruct=yes'))
+            response = follow_get(http, PAGE_PATH + FORM_PATH_ARGS)
 
             doc = Nokogiri::HTML(response.body)
 
             icsid = doc.css('#ICSID').attr('value')
 
-            response = http.request_post(URI('https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL'), construct_post_data(student_number, icsid), {'Cookie' => @cookies})
+            response = http.request_post(PAGE_PATH, construct_post_data(student_number, icsid), {'Cookie' => @cookies})
 
             if response.body.include? FAIL_TEXT
                 raise 'Failed. Please retry.'
             elsif response.body.include? NOT_FOUND_TEXT
                 return nil
             else
-                open('dump3.txt', "w") { |io| io.write(response.body) }
-
                 doc = Nokogiri::HTML(response.body)
                 rows = doc.xpath("//table[@id='TERM_CLASSES$scroll$0']/tr/td/table/tr[position()>1]")
 
