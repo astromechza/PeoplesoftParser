@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
     s.homepage = 'http://github.com/AstromechZA/PeoplesoftParser'
 
     s.add_dependency 'nokogiri'
+    s.add_dependency 'mechanize'
 
     s.add_development_dependency 'rspec'
 
