@@ -41,6 +41,14 @@ module PeoplesoftScraper
     # If the student number doesn't match any student a NameError is thrown.
     #
     def retrieve(student_number)
+        # validation
+        if student_number.nil? or student_number.strip == ''
+            fail ArgumentError, "student_number can't be blank"
+        end
+
+        # sanitize
+        student_number = student_number.strip.upcase
+
         m = Mechanize.new
         m.get(PUBLIC_ACCESS_URL) do |page|
 
@@ -62,7 +70,7 @@ module PeoplesoftScraper
             end
 
             dataset = {
-                student_number: student_number.upcase,
+                student_number: student_number,
                 student_name: page.search("//span[@id='DERIVED_SCC_SUM_PERSON_NAME$5$']")[0].content,
                 terms: []
             }
