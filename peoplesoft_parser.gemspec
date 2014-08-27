@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
     s.description = 'Download publically accessible information from UCT peoplesoft.'
     s.authors     = ['Ben Meier']
     s.email       = 'benmeier42@gmail.com'
-    s.files       = ['lib/peoplesoft_parser.rb']
+    s.files       = ['lib/peoplesoft_scraper.rb']
     s.license     = 'MIT'
     s.executables = []
     s.require_paths = ['lib']

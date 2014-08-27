@@ -1,7 +1,7 @@
 require 'bundler/setup'
 Bundler.setup
 
-require 'peoplesoft_parser'
+require 'peoplesoft_scraper'
 
 RSpec.configure do |config|
 end

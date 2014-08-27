@@ -1,6 +1,6 @@
-describe PeoplesoftParser do
+describe PeoplesoftScraper do
     it 'can retrieve student marks' do
-        marks = PeoplesoftParser.new.retrieve('MRXBRU001')
+        marks = PeoplesoftScraper.retrieve('MRXBRU001')
         puts marks.inspect
         expect(1).to eq(2)
     end

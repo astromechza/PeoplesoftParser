@@ -1,13 +1,9 @@
 require 'net/http'
 require 'mechanize'
-require 'logger'
 
-class PeoplesoftParser
+class PeoplesoftScraper
 
-    def initialize
-    end
-
-    def retrieve(student_number)
+    def self.retrieve(student_number)
         m = Mechanize.new
         m.get('https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL') do |page|
 
@@ -20,7 +16,7 @@ class PeoplesoftParser
             page = m.submit(form)
 
             if page.body.include? 'No student record found for this Campus ID'
-                return nil
+                return NameError('No student record found for this Campus ID', student_number)
             end
 
             term_links = page.links_with(id: 'DERIVED_SSS_SCT_SSS_TERM_LINK')
@@ -41,7 +37,7 @@ class PeoplesoftParser
                 year, career, institution = t.xpath(".//span")[0..2].map { |s| nonbsp(s.content).strip  }
 
                 term_dataset = {
-                    year: year,
+                    year: year.to_i,
                     career: career,
                     institution: institution,
                     results: []
@@ -57,26 +53,31 @@ class PeoplesoftParser
                 courses.each do |c|
                     course_name, description, units, grading, grade, points = c.xpath(".//span")[0..5].map { |s| nonbsp(s.content).strip  }
 
-                    points = nil if points == ""
-                    grade = nil if grade == ""
-                    units = nil if units == ""
+                    points = (points == "") ? nil : points.to_f
+                    grade = (grade == "") ? nil : grade.to_f
+                    units = (units == "") ? nil : units.to_f
 
                     term_dataset[:results] << {
                         course: course_name,
                         description: description,
                         units: units,
                         grading: grading,
-                        points: points
+                        grade: grade,
+                        # although we could put points in, its == units * grade
+                        #so its a unnecessary
+                        #points: points
                     }
                 end
 
                 dataset[:terms] << term_dataset
 
-                unless page.links_with(id: 'DERIVED_SSS_SCT_SSS_TERM_LINK').empty?
-                    form = page.form(name: 'win0')
-                    form.ICAction = 'DERIVED_SSS_SCT_SSS_TERM_LINK'
-                    page = m.submit(form)
+                if page.links_with(id: 'DERIVED_SSS_SCT_SSS_TERM_LINK').empty?
+                    raise IOError 'Form logic failed (no route to terms page)'
                 end
+
+                form = page.form(name: 'win0')
+                form.ICAction = 'DERIVED_SSS_SCT_SSS_TERM_LINK'
+                page = m.submit(form)
             end
 
             return dataset
@@ -85,7 +86,7 @@ class PeoplesoftParser
 
     private
 
-        def nonbsp(str)
+        def self.nonbsp(str)
             nbsp = Nokogiri::HTML("&nbsp;").text
             str.gsub(nbsp,'')
         end
