@@ -4,13 +4,6 @@ require 'logger'
 
 class PeoplesoftParser
 
-    REDIRECT_LIMIT = 10
-
-    NOT_FOUND_TEXT = 'No student record found for this Campus ID'
-    FAIL_TEXT = "It's now at <a href=\"https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/?cmd=logout\""
-
-    PAGE_PATH = '/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL'
-
     def initialize
     end
 
