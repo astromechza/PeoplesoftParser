@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    peoplesoft_parser (0.1)
+    peoplesoft_scraper (0.1)
       mechanize
       trollop
 
@@ -64,6 +64,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  peoplesoft_parser!
+  peoplesoft_scraper!
   rspec
   rubocop

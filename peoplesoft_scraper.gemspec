@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-    s.name        = 'peoplesoft_parser'
+    s.name        = 'peoplesoft_scraper'
     s.version     = '0.1'
     s.date        = '2014-08-26'
     s.summary     = 'Download publically accessible grade information from UCT peoplesoft.'
