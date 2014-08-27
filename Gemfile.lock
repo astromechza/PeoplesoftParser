@@ -3,7 +3,7 @@ PATH
   specs:
     peoplesoft_parser (0.1)
       mechanize
-      nokogiri
+      trollop
 
 GEM
   remote: https://rubygems.org/
@@ -54,6 +54,7 @@ GEM
       ruby-progressbar (~> 1.4)
     ruby-progressbar (1.5.1)
     slop (3.6.0)
+    trollop (2.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)

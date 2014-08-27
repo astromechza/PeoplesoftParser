@@ -42,7 +42,7 @@ module PeoplesoftScraper
     #
     def retrieve(student_number)
         # validation
-        if student_number.nil? or student_number.strip == ''
+        if student_number.nil? || student_number.strip == ''
             fail ArgumentError, "student_number can't be blank"
         end
 

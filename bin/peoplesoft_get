@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'trollop'
+require 'peoplesoft_scraper'
+
+opts = Trollop::options do
+    banner 'Usage: peoplesoft_get <student_number>'
+    opt :to_json, 'output as json', short: 'j'
+end
+
+if ARGV.size == 1
+    o = PeoplesoftScraper.retrieve(ARGV[0])
+else
+    Trollop::die 'student number must be provided'
+end
