@@ -1,6 +1,6 @@
 describe PeoplesoftScraper do
     it 'can retrieve student marks' do
-        marks = PeoplesoftScraper.retrieve('MRXBRU000')
+        marks = PeoplesoftScraper.retrieve('MRXBEN001')
         puts marks.inspect
     end
 end

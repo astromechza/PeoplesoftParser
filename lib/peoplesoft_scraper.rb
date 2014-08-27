@@ -9,6 +9,9 @@ module PeoplesoftScraper
     # url of peoplesoft public access page
     PUBLIC_ACCESS_URL = 'https://srvslspsw001.uct.ac.za/psc/public/EMPLOYEE/HRMS/c/UCT_PUBLIC_MENU.UCT_SS_ADV_PUBLIC.GBL'
 
+    # nbsp; token for replacing
+    NBSP = Nokogiri::HTML('&nbsp;').text
+
     # Retrieve the marks for the given student number
     # * +student_number+ - The student number (eg: CCCAAA001 )
     #
@@ -36,6 +39,7 @@ module PeoplesoftScraper
     # }
     #
     # If the student number doesn't match any student a NameError is thrown.
+    #
     def retrieve(student_number)
         m = Mechanize.new
         m.get(PUBLIC_ACCESS_URL) do |page|
@@ -66,7 +70,7 @@ module PeoplesoftScraper
             terms = page.search("//table[@id='SSR_DUMMY_RECV1$scroll$0']/tr[position()>2]")
             terms.each_with_index do |t, i|
                 year, career, institution = t.xpath('.//span')[0..2].map do |s|
-                    nonbsp(s.content).strip
+                    s.content.gsub(NBSP, ' ').strip
                 end
 
                 term_dataset = {
@@ -85,7 +89,7 @@ module PeoplesoftScraper
 
                 courses.each do |c|
                     course_name, description, units, grading, grade = c.xpath('.//span')[0..4].map do |s|
-                        nonbsp(s.content).strip
+                        s.content.gsub(NBSP, ' ').strip
                     end
 
                     grade = (grade == '') ? nil : grade.to_f
@@ -113,12 +117,5 @@ module PeoplesoftScraper
 
             return dataset
         end
-    end
-
-    private
-
-    def nonbsp(str)
-        nbsp = Nokogiri::HTML('&nbsp;').text
-        str.gsub(nbsp, '')
     end
 end
