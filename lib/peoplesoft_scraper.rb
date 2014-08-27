@@ -16,7 +16,7 @@ class PeoplesoftScraper
             page = m.submit(form)
 
             if page.body.include? 'No student record found for this Campus ID'
-                return NameError('No student record found for this Campus ID', student_number)
+                raise NameError.new('No student record found for this Campus ID', student_number)
             end
 
             term_links = page.links_with(id: 'DERIVED_SSS_SCT_SSS_TERM_LINK')
@@ -72,7 +72,7 @@ class PeoplesoftScraper
                 dataset[:terms] << term_dataset
 
                 if page.links_with(id: 'DERIVED_SSS_SCT_SSS_TERM_LINK').empty?
-                    raise IOError 'Form logic failed (no route to terms page)'
+                    raise IOError.new 'Form logic failed (no route to terms page)'
                 end
 
                 form = page.form(name: 'win0')
