@@ -1,4 +1,4 @@
-PeoplesoftParser
+PeoplesoftScraper
 ================
 
-Ruby library/gem for interacting with UCT peoplesoft public access.
+Ruby library/gem for downloading marks from UCT's peoplesoft public-access service.
