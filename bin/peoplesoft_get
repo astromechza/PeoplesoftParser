@@ -4,7 +4,7 @@ require 'trollop'
 require 'peoplesoft_scraper'
 require 'json'
 
-opts = Trollop::options do
+opts = Trollop.options do
     banner 'Usage: peoplesoft_get <student_number>'
     opt :to_json, 'output as json', short: 'j'
 end
@@ -17,7 +17,7 @@ if ARGV.size == 1
         puts "Student Number: #{o[:student_number]}"
         puts "Student Name: #{o[:student_name]}"
 
-        o[:terms].sort_by {|a| a[:year]}.each do |t|
+        o[:terms].sort_by { |a| a[:year] }.each do |t|
 
             puts t[:year]
             puts "\tInstitution: #{t[:institution]}"
@@ -27,9 +27,8 @@ if ARGV.size == 1
             t[:results].each do |c|
                 puts "\t\t#{c[:course]} [#{c[:description]}][#{c[:units].to_i}] = #{c[:grade]}%"
             end
-
         end
     end
 else
-    Trollop::die 'student number must be provided'
+    Trollop.die 'student number must be provided'
 end
