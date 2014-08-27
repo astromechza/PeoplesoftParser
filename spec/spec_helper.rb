@@ -3,5 +3,5 @@ Bundler.setup
 
 require 'peoplesoft_scraper'
 
-RSpec.configure do |config|
-end
+# RSpec.configure do |config|
+# end

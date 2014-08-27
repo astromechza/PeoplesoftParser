@@ -1,0 +1,22 @@
+
+Metrics/LineLength:
+    Max: 120
+
+IndentationWidth:
+    Enabled: false
+
+IndentationConsistency:
+    Enabled: false
+
+MethodLength:
+    CountComments: false
+    Max: 20
+
+TrailingComma:
+    Enabled: false
+
+IndentHash:
+    Enabled: false
+
+CommentIndentation:
+    Enabled: false
