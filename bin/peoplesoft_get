@@ -10,23 +10,32 @@ opts = Trollop.options do
 end
 
 if ARGV.size == 1
-    o = PeoplesoftScraper.retrieve(ARGV[0])
-    if opts[:to_json]
-        puts o.to_json
-    else
-        puts "Student Number: #{o[:student_number]}"
-        puts "Student Name: #{o[:student_name]}"
+    begin
+        o = PeoplesoftScraper.retrieve(ARGV[0])
+        if opts[:to_json]
+            puts o.to_json
+        else
+            puts "Student Number: #{o[:student_number]}"
+            puts "Student Name: #{o[:student_name]}"
 
-        o[:terms].sort_by { |a| a[:year] }.each do |t|
+            o[:terms].sort_by { |a| a[:year] }.each do |t|
 
-            puts t[:year]
-            puts "\tInstitution: #{t[:institution]}"
-            puts "\tCareer: #{t[:career]}"
-            puts "\tResults:"
+                puts t[:year]
+                puts "\tInstitution: #{t[:institution]}"
+                puts "\tCareer: #{t[:career]}"
+                puts "\tResults:"
 
-            t[:results].each do |c|
-                puts "\t\t#{c[:course]} [#{c[:description]}][#{c[:units].to_i}] = #{c[:grade]}%"
+                t[:results].each do |c|
+                    puts "\t\t#{c[:course]} [#{c[:description]}][#{c[:units].to_i}] = #{c[:grade]}%"
+                end
             end
+        end
+    rescue Exception => e
+        if opts[:to_json]
+            o = { error: e }
+            puts o.to_json
+        else
+            raise e
         end
     end
 else
