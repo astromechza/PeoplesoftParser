@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
     s.email       = 'benmeier42@gmail.com'
     s.files       = ['lib/peoplesoft_scraper.rb']
     s.license     = 'MIT'
-    s.executables = ['peoplesoft_get']
+    s.executables = ['peoplesoft_get', 'peoplesoft_get_all']
     s.require_paths = ['lib']
     s.required_ruby_version     = '>= 2.1.0'
     s.homepage = 'http://github.com/AstromechZA/PeoplesoftParser'

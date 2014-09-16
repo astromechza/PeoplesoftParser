@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require 'trollop'
+require 'peoplesoft_scraper'
+require 'json'
+
+SNR = /[a-z]{6}\d\d\d/
+
+opts = Trollop.options do
+    banner 'Usage: peoplesoft_get_all <source_file> <output directory>'
+    opt :anonymised, 'remove student names and identifying information from output', short: 'a'
+end
+
+if ARGV.size == 2
+
+    output_dir = File.expand_path( ARGV[1].strip )
+    unless File.directory? output_dir
+        Trollop.die "output directory #{output_dir} is not valid"
+    end
+
+    lines = File.readlines(ARGV[0]).shuffle
+
+    lines.each_with_index do |line, i|
+        line = line.strip.downcase
+        if line =~ SNR
+            begin
+                puts "getting #{line}"
+                r = PeoplesoftScraper.retrieve(line)
+
+                if opts[:anonymised]
+                    r.delete(:student_number)
+                    r.delete(:student_name)
+                end
+
+                fn = opts[:anonymised] ? "#{i}.json"  : "#{line}.json"
+
+                File.open(File.join(output_dir, fn), 'w') {|f| f.write(r.to_json)}
+                puts "got #{line}"
+            rescue StandardError  => e
+                puts e
+            end
+        end
+    end
+
+else
+    Trollop.die 'requires 2 arguments'
+end
